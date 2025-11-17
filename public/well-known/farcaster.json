@@ -1,11 +1,11 @@
 {
   "name": "lowfreq signals mint",
-  "description": "Mint your lowfreq signal NFT – hold 100k $lowfreq to unlock.",
+  "description": "Mint your lowfreq signal NFT – hold 100k $lowfreq to unlock frequency.",
   "version": "1.0.0",
   "icon": "https://lowfreq-mint-app.vercel.app/logo.png",
   "screenshots": [
     {
-      "url": "https://lowfreq-mint-app.vercel.app/logo.png",
+      "url": "https://lowfreq-mint-app.vercel.app/screenshot.png",
       "width": 1200,
       "height": 630
     }
