@@ -1,3 +1,4 @@
+<img src="/logo.png" alt="lowfreq" className="w-12 h-12 mb-2" />
 export default function LowfreqMint() {
   return (
     <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-8">
