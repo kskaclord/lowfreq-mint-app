@@ -1,11 +1,10 @@
+// src/app/layout.tsx tamamen şu haliyle değiştir (kopyala-yapıştır):
 import type { Metadata } from "next";
-import { GeistSans } from "geist/font/sans";
 import "./globals.css";
-import Head from "next/head";
 
 export const metadata: Metadata = {
   title: "lowfreq signals mint",
-  description: "Mint your lowfreq signal NFT – hold 100k $lowfreq to unlock frequency.",
+  description: "Quiet minds, heavy signals. Token-gated NFT collection on Base",
 };
 
 export default function RootLayout({
@@ -15,11 +14,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <Head>
-        {/* Farcaster Mini App SDK – CDN */}
+      <head>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Geist+Sans:wght@100..900&display=swap"
+          rel="stylesheet"
+        />
         <script src="https://cdn.jsdelivr.net/npm/@farcaster/miniapp-sdk@0.0.10/dist/index.min.js" />
-      </Head>
-      <body className={GeistSans.className}>{children}</body>
+      </head>
+      <body style={{ fontFamily: "'Geist Sans', system-ui, sans-serif" }}>
+        {children}
+      </body>
     </html>
   );
 }
