@@ -4,25 +4,33 @@ import { useEffect } from "react";
 
 export default function LowfreqMint() {
   useEffect(() => {
-    // Yeni SDK adı: MiniAppSDK (eski fcMiniApp öldü)
-    const ready = () => {
-      if (typeof window !== "undefined" && (window as any).MiniAppSDK?.ready) {
+    const sendReady = () => {
+      // 2025 Mart sonrası güncel yöntem – üçünü de dene, biri kesin çalışır
+      if ((window as any).farcaster?.miniapp?.ready) {
+        (window as any).farcaster.miniapp.ready();
+      }
+      if ((window as any).MiniAppSDK?.ready) {
         (window as any).MiniAppSDK.ready();
+      }
+      if ((window as any).fcMiniApp?.ready) {
+        (window as any).fcMiniApp.ready();
       }
     };
 
-    // Sayfa yüklendiği anda
-    ready();
+    // Hemen dene
+    sendReady();
 
-    // Garanti olsun diye 1.5 saniye sonra da zorla
-    const timer = setTimeout(ready, 1500);
+    // 500ms, 1000ms ve 2000ms sonra da zorla gönder (kesin kapanır)
+    const timers = [500, 1000, 2000].map(delay =>
+      setTimeout(sendReady, delay)
+    );
 
-    return () => clearTimeout(timer);
+    return () => timers.forEach(clearTimeout);
   }, []);
 
   return (
     <>
-      {/* Farcaster Mini App SDK – son sürüm */}
+      {/* En güncel SDK – CDN’den direkt çekiyoruz */}
       <script src="https://cdn.jsdelivr.net/npm/@farcaster/miniapp-sdk@latest/dist/index.min.js" />
 
       <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-8">
