@@ -1,12 +1,32 @@
 "use client";
 
 import { useEffect } from "react";
-import { sdk } from "@farcaster/miniapp-sdk"; // Import – docs'taki zorunlu satır
 
 export default function LowfreqMint() {
   useEffect(() => {
-    // Docs'taki tam yöntem: App yüklendiğinde ready çağr
-    sdk.actions.ready(); // Bu satır splash'i kapatır
+    // SDK’yı bu sayfaya da yükle (garanti olsun)
+    const script = document.createElement("script");
+    script.src = "https://cdn.jsdelivr.net/npm/@farcaster/miniapp-sdk@latest/dist/index.min.js";
+    script.async = true;
+    document.body.appendChild(script);
+
+    const tryReady = () => {
+      // Farcaster’ın son 3 yıldır kullandığı tüm olası SDK yolları (biri kesin tutar)
+      if ((window as any).MiniAppSDK?.ready) (window as any).MiniAppSDK.ready();
+      if ((window as any).fcMiniApp?.ready) (window as any).fcMiniApp.ready();
+      if ((window as any).farcaster?.miniapp?.ready) (window as any).farcaster.miniapp.ready();
+      if ((window as any).farcaster?.actions?.ready) (window as any).farcaster.actions.ready();
+    };
+
+    // Sayfa açılır açılmaz + her 300ms’de bir dene (maks 1.5sn)
+    tryReady();
+    const interval = setInterval(tryReady, 300);
+    setTimeout(() => clearInterval(interval), 1500);
+
+    return () => {
+      clearInterval(interval);
+      if (script.parentNode) script.parentNode.removeChild(script);
+    };
   }, []);
 
   return (
