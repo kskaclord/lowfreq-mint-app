@@ -1,18 +1,9 @@
 {
   "redirects": [
     {
-      "source": "/",
+      "source": "/.well-known/farcaster.json",
       "destination": "https://api.farcaster.xyz/miniapps/hosted-manifest/019a939f-b29d-53a5-e3d8-418c06431e43",
-      "permanent": false,
-      "statusCode": 307
+      "permanent": false
     }
-  ],
-  "rewrites": [
-    {
-      "source": "/.well-known/(.*)",
-      "destination": "/.well-known/$1"
-    }
-  ],
-  "cleanUrls": true,
-  "trailingSlash": false
+  ]
 }
