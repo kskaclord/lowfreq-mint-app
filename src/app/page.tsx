@@ -4,22 +4,43 @@ import { useEffect } from "react";
 
 export default function LowfreqMint() {
   useEffect(() => {
-    // @latest SDK zaten layout.tsx’te yüklü, sadece ready() basmak yeterli
     const tryReady = () => {
-      // Farcaster’ın 2025’teki çalışan tek yolu
-      if (typeof window !== "undefined" && (window as any).MiniAppSDK?.ready) {
-        (window as any).MiniAppSDK.ready();
+      if (typeof window === "undefined") return;
+
+      const sdk =
+        (window as any).MiniAppSDK ||
+        (window as any).fcMiniApp ||
+        (window as any).farcaster?.miniapp ||
+        (window as any).farcaster?.actions;
+
+      if (sdk?.ready) {
+        sdk.ready();
+      } else if (sdk?.actions?.ready) {
+        sdk.actions.ready();
       }
     };
 
-    tryReady(); // hemen dene
-    // 300ms arayla 5 kez daha dene (toplam max 1.5sn)
-    let count = 0;
-    const timer: NodeJS.Timeout = setInterval(() => {
+    // Hemen dene
+    tryReady();
+
+    // 200ms arayla 10 kez daha dene (toplam max 2 saniye)
+    let attempts = 0;
+    const intervalId = setInterval(() => {
       tryReady();
-      count++;
-      if (count >= 5) clearInterval(timer);
-    }, 300);
+      attempts++;
+      if (attempts >= 10) clearInterval(intervalId);
+    }, 200);
+
+    // 2 saniye sonra son bir kez zorla
+    const timeoutId = setTimeout(() => {
+      clearInterval(intervalId);
+      tryReady();
+    }, 2000);
+
+    return () => {
+      clearInterval(intervalId);
+      clearTimeout(timeoutId);
+    };
   }, []);
 
   return (
