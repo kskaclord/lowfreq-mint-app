@@ -1,0 +1,27 @@
+{
+  "accountAssociation": {
+    "header": "eyJmaWQiOjQ3MzM2NiwidHlwZSI6ImF1dGgiLCJrZXkiOiIweDIwNDQyMDNCZGFiZTE0ZTQwNUEyQTY4MTE2MjFkZTI0Njg4RTZlNjkifQ",
+    "payload": "eyJkb21haW4iOiJsb3dmcmVxLW1pbnQtYXBwLnZlcmNlbC5hcHAifQ",
+    "signature": "+b3HkGIs/VPhJbOhQaCuj3aIGNPBLuYpyjhbi3C5siQAQVHQwLaj/K1hdooX5+vHifLXdfHgXRvURHgSCXkoKhs="
+  },
+  "miniapp": {
+    "version": "1",
+    "name": "lowfreq signals mint",
+    "iconUrl": "https://lowfreq-mint-app.vercel.app/logo.png",
+    "homeUrl": "https://lowfreq-mint-app.vercel.app",
+    "imageUrl": "https://lowfreq-mint-app.vercel.app/screenshot.png",
+    "buttonTitle": "Mint Signal",
+    "splashImageUrl": "https://lowfreq-mint-app.vercel.app/logo.png",
+    "splashBackgroundColor": "#000000",
+    "splashTextColor": "#ffffff",
+    "primaryCategory": "finance",
+    "tags": ["nft", "mint", "lowfreq", "base"],
+    "subtitle": "Hold 100k $lowfreq to mint your signal",
+    "description": "Quiet minds, heavy signals. Token-gated NFT collection on Base – mint 1/333 lowfreq signal.",
+    "webhookUrl": "https://lowfreq-mint-app.vercel.app/api/webhook",
+    "ogTitle": "lowfreq signals mint",
+    "ogDescription": "Quiet minds, heavy signals. Hold 100k $lowfreq to mint.",
+    "ogImageUrl": "https://lowfreq-mint-app.vercel.app/screenshot.png",
+    "heroImageUrl": "https://lowfreq-mint-app.vercel.app/screenshot.png"
+  }
+}
