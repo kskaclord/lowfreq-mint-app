@@ -39,3 +39,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 # lowfreq-mint-app
 lowfreq signals mint mini app
 a26c4b900371371b622e4a72fee5bb28d453da96
+
+force vercel cache clear – 2025
+
+
