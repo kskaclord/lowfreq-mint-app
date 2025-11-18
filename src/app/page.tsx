@@ -4,25 +4,38 @@ import { useEffect } from "react";
 
 export default function LowfreqMint() {
   useEffect(() => {
-    // Farcaster Mini App SDK’yı CDN’den yükle (layout’ta olmasa bile buradan çalışsın)
+    // SDK script'i yükle (onload ile bekle)
+    if (document.querySelector('script[src*="miniapp-sdk"]')) return; // Zaten varsa atla
+
     const script = document.createElement("script");
-    script.src = "https://cdn.farcaster.xyz/miniapps/sdk@latest";
+    script.src = "https://cdn.jsdelivr.net/npm/@farcaster/miniapp-sdk@latest/dist/index.min.js";
     script.async = true;
+    script.onload = () => {
+      console.log("lowfreq: SDK loaded – calling ready()");
+      tryReady();
+    };
     document.head.appendChild(script);
 
-    // SDK yüklendikten sonra ready()’i zorla gönder (her 200ms’de bir, max 2 saniye)
+    let interval;
+
     const tryReady = () => {
-      if ((window as any).MiniAppSDK?.ready) {
-        (window as any).MiniAppSDK.ready();
-        console.log("lowfreq: ready() sent – splash killed");
+      try {
+        if ((window as any).MiniAppSDK?.ready) {
+          (window as any).MiniAppSDK.ready();
+          console.log("lowfreq: ready() success – splash killed");
+          clearInterval(interval); // Başarılıysa interval'i durdur
+        }
+      } catch (e) {
+        console.error("lowfreq: ready() error:", e);
       }
     };
 
-    const interval = setInterval(tryReady, 200);
+    // SDK yüklenmezse 500ms'de bir dene (max 3 saniye)
+    interval = setInterval(tryReady, 500);
     const timeout = setTimeout(() => {
       clearInterval(interval);
-      tryReady(); // son bir kez daha zorla
-    }, 2000);
+      tryReady(); // Son deneme
+    }, 3000);
 
     return () => {
       clearInterval(interval);
@@ -32,10 +45,10 @@ export default function LowfreqMint() {
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-8">
-      <img src="/logo.png" alt="lowfreq" className="w-40 h-40 mb-8" />
-      <h1 className="text-7xl font-black tracking-wider">lowfreq</h1>
-      <h2 className="text-3xl mt-4 opacity-80">signals</h2>
-      <p className="text-xl text-gray-400 mt-8">mint soon</p>
+      <img src="/logo.png" alt="lowfreq" className="w-32 h-32 mb-8" />
+      <h1 className="text-6xl font-bold mb-2 tracking-wider">lowfreq</h1>
+      <h2 className="text-3xl mb-6 opacity-80">signals</h2>
+      <p className="text-xl text-gray-400">mint soon</p>
     </div>
   );
 }
