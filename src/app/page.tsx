@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-// ready()’i useEffect DIŞINA alıyoruz → Farcaster bunu direkt çalıştırıyor
+// BU KISIM TAM ÇALIŞAN HALİ – ASLA DEĞİŞTİRME
 if (typeof window !== "undefined") {
   const win = window as any;
 
@@ -13,7 +13,6 @@ if (typeof window !== "undefined") {
     win.farcaster?.actions?.ready?.();
   };
 
-  // Sayfa açılır açılmaz + gecikmeli seri ateşle
   killSplash();
   setTimeout(killSplash, 300);
   setTimeout(killSplash, 700);
@@ -22,17 +21,40 @@ if (typeof window !== "undefined") {
 }
 
 export default function LowfreqMint() {
-  // useEffect artık sadece görsel için (ready burda olmasın)
   useEffect(() => {
-    // buraya hiçbir şey yazmıyoruz
+    // boş kalacak, hazır splash zaten dışarıda
   }, []);
 
   return (
-    <div className="w-full h-screen bg-black text-white flex flex-col items-center justify-center p-8">
-      <img src="/logo.png" alt="lowfreq" className="w-40 h-40 mb-8" />
-      <h1 className="text-7xl font-black tracking-wider">lowfreq</h1>
-      <h2 className="text-3xl mt-4 opacity-80">signals</h2>
-      <p className="text-xl text-gray-500 mt-12">hold 100k $lowfreq to mint</p>
+    <div className="w-full h-screen bg-black text-white flex flex-col items-center justify-center px-8 overflow-hidden">
+      {/* Logo */}
+      <img 
+        src="/logo.png" 
+        alt="lowfreq" 
+        className="w-52 h-52 mb-10 select-none pointer-events-none" 
+      />
+
+      {/* lowfreq – gradient ve ultra ağır */}
+      <h1 className="text-8xl md:text-9xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-zinc-100 via-zinc-300 to-zinc-600 leading-none">
+        lowfreq
+      </h1>
+
+      {/* signals */}
+      <h2 className="text-4xl md:text-5xl mt-6 tracking-widest opacity-75 font-light">
+        signals
+      </h2>
+
+      {/* Mint koşulu */}
+      <p className="text-xl md:text-2xl text-zinc-500 mt-16 tracking-wider font-medium">
+        hold 100k $lowfreq to mint
+      </p>
+
+      {/* Alt bilgi – sabit altta */}
+      <div className="absolute bottom-8 left-0 right-0 text-center">
+        <p className="text-xs text-zinc-600 tracking-widest opacity-70">
+          1/333 · base · token-gated
+        </p>
+      </div>
     </div>
   );
 }
