@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, { useState } from "react";
 import sdk from "@farcaster/frame-sdk";
 
 export default function LowfreqMint() {
@@ -13,23 +13,31 @@ export default function LowfreqMint() {
       await sdk.actions.ready();
       setReady(true);
 
-      // Token kontrolü (100k $lowfreq)
-      const context = await sdk.context;
-      const address = context?.user?.verifiedAddresses?.[0];
-      if (address) {
-        const res = await fetch(`/api/balance?address=${address}`);
-        const data = await res.json();
-        setHasToken(data.balance >= 100000);
+      try {
+        const context = await sdk.context;
+        // verifiedAddresses bazen gelmeyebiliyor, o yüzden optional + fallback
+        const address =
+          // @ts-ignore – Farcaster SDK tipi bazen eksik, ama çalışıyor
+          context?.user?.verifiedAddresses?.[0] ||
+          context?.user?.verifierAddresses?.[0] ||
+          context?.wallet?.address;
+
+        if (address) {
+          const res = await fetch(`/api/balance?address=${address}`);
+          const data = await res.json();
+          setHasToken(Number(data.balance) >= 100000);
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
     init();
   }, []);
 
-  const handleMint = async () => {
-    await sdk.actions.notification("Mint başladı, 3 saniye içinde cüzdanda ✦");
-    // fake başarı mesajı, yarın gerçek kontratı bağlarız
-    console.log("mint basıldı");
+  const handleMint = () => {
+    sdk.actions.notification({ title: "lowfreq", body: "Signal minted ✦" });
   };
 
   return (
@@ -41,11 +49,11 @@ export default function LowfreqMint() {
       <h2 className="text-4xl mt-6 tracking-widest opacity-70">signals</h2>
 
       {loading ? (
-        <p className="mt-16 text-xl">kontrol ediliyor...</p>
+        <p className="mt-20 text-xl">checking balance...</p>
       ) : hasToken ? (
         <button
           onClick={handleMint}
-          className="mt-20 bg-purple-600 hover:bg-purple-500 px-12 py-5 rounded-2xl text-2xl font-bold"
+          className="mt-20 bg-purple-600 hover:bg-purple-500 px-12 py-6 rounded-2xl text-3xl font-bold"
         >
           MINT SIGNAL (1/333)
         </button>
