@@ -5,27 +5,32 @@ import sdk from "@farcaster/frame-sdk";
 
 export default function LowfreqMint() {
   const [ready, setReady] = useState(false);
+  const [hasToken, setHasToken] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const init = async () => {
-      try {
-        await sdk.actions.ready();  // ← OHARA’NIN ALTINI ÇİZDİĞİ SATIR
-        setReady(true);
-        console.log("ready gitti kanka");
-      } catch (e) {
-        console.error("ready error:", e);
+      await sdk.actions.ready();
+      setReady(true);
+
+      // Token kontrolü (100k $lowfreq)
+      const context = await sdk.context;
+      const address = context?.user?.verifiedAddresses?.[0];
+      if (address) {
+        const res = await fetch(`/api/balance?address=${address}`);
+        const data = await res.json();
+        setHasToken(data.balance >= 100000);
       }
+      setLoading(false);
     };
     init();
   }, []);
 
-  if (!ready) {
-    return (
-      <div className="fixed inset-0 bg-black flex items-center justify-center">
-        <p className="text-white text-2xl">lowfreq yükleniyor...</p>
-      </div>
-    );
-  }
+  const handleMint = async () => {
+    await sdk.actions.notification("Mint başladı, 3 saniye içinde cüzdanda ✦");
+    // fake başarı mesajı, yarın gerçek kontratı bağlarız
+    console.log("mint basıldı");
+  };
 
   return (
     <div className="fixed inset-0 bg-black text-white flex flex-col items-center justify-center px-8">
@@ -34,8 +39,23 @@ export default function LowfreqMint() {
         lowfreq
       </h1>
       <h2 className="text-4xl mt-6 tracking-widest opacity-70">signals</h2>
-      <p className="text-xl text-zinc-500 mt-16">hold 100k $lowfreq to mint</p>
-      <p className="absolute bottom-10 text-xs text-zinc-600 opacity-60">1/333 · base · token-gated</p>
+
+      {loading ? (
+        <p className="mt-16 text-xl">kontrol ediliyor...</p>
+      ) : hasToken ? (
+        <button
+          onClick={handleMint}
+          className="mt-20 bg-purple-600 hover:bg-purple-500 px-12 py-5 rounded-2xl text-2xl font-bold"
+        >
+          MINT SIGNAL (1/333)
+        </button>
+      ) : (
+        <p className="mt-20 text-xl text-zinc-500">hold 100k $lowfreq to mint</p>
+      )}
+
+      <p className="absolute bottom-10 text-xs text-zinc-600 opacity-60">
+        1/333 · base · token-gated
+      </p>
     </div>
   );
 }
