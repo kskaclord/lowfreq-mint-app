@@ -3,43 +3,28 @@
 import { useEffect, useState } from "react";
 import sdk from "@farcaster/frame-sdk";
 import { base } from "wagmi/chains";
-import { usePrepareContractWrite, useContractWrite, useWaitForTransactionReceipt } from "wagmi";
+import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 
 const CONTRACT_ADDRESS = "0x6A94fE881756e4cCFFE42233945f4C88965814AA";
-const ABI = [
-  {
-    inputs: [{ internalType: "uint256", name: "quantity", type: "uint256" }],
-    name: "mint",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-] as const;
 
 export default function LowfreqMint() {
   const [ready, setReady] = useState(false);
   const [hasToken, setHasToken] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // 1. Config hazırla (address, abi vs. burda)
-  const { config } = usePrepareContractWrite({
-    address: CONTRACT_ADDRESS,
-    abi: ABI,
-    functionName: "mint",
-    args: [BigInt(1)],
-    chainId: base.id,
-  });
+  const {
+    writeContract,
+    data: hash,
+    isPending: mintLoading,
+  } = useWriteContract();
 
-  // 2. Write hook’u config’le kullan
-  const { writeContract, data, isPending: mintLoading } = useContractWrite(config);
-
-  const { isSuccess } = useWaitForTransactionReceipt({ hash: data?.hash });
+  const { isSuccess } = useWaitForTransactionReceipt({ hash });
 
   useEffect(() => {
     if (isSuccess) {
       sdk.actions.addNotification({
         type: "success",
-        message: "Signal minted — 1/333 ✦",
+        message: "Signal minted — 1/333",
       });
     }
   }, [isSuccess]);
@@ -65,7 +50,7 @@ export default function LowfreqMint() {
 
         setHasToken(balance >= 100_000);
       } catch (err) {
-        console.error("init error:", err);
+        console.error(err);
         setHasToken(false);
       } finally {
         setLoading(false);
@@ -74,6 +59,24 @@ export default function LowfreqMint() {
 
     init();
   }, []);
+
+  const handleMint = () => {
+    writeContract({
+      address: CONTRACT_ADDRESS,
+      abi: [
+        {
+          inputs: [{ internalType: "uint256", name: "quantity", type: "uint256" }],
+          name: "mint",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+      ],
+      functionName: "mint",
+      args: [BigInt(1)],
+      chainId: base.id,
+    });
+  };
 
   return (
     <div className="fixed inset-0 bg-black text-white flex flex-col items-center justify-center px-8">
@@ -87,8 +90,8 @@ export default function LowfreqMint() {
         <p className="mt-20 text-xl text-zinc-400 animate-pulse">checking wallet...</p>
       ) : hasToken ? (
         <button
-          onClick={() => writeContract?.()}
-          disabled={!config || mintLoading}
+          onClick={handleMint}
+          disabled={mintLoading}
           className="mt-20 bg-purple-600 hover:bg-purple-500 disabled:opacity-50 px-20 py-8 rounded-3xl text-5xl font-black shadow-2xl animate-pulse transition"
         >
           {mintLoading ? "MINTING..." : "MINT SIGNAL (1/333)"}
@@ -100,6 +103,5 @@ export default function LowfreqMint() {
       <p className="absolute bottom-6 text-xs text-zinc-700 opacity-50">
         1/333 · base · live
       </p>
-    </div>
-  );
+    </div>;
 }
