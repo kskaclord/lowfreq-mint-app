@@ -7,6 +7,7 @@ export default function LowfreqMint() {
   const [ready, setReady] = useState(false);
   const [hasToken, setHasToken] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [debug, setDebug] = useState(""); // ← adresi ve balance’i görmek için
 
   useEffect(() => {
     const init = async () => {
@@ -15,34 +16,28 @@ export default function LowfreqMint() {
 
       try {
         const context = await sdk.context;
+        console.log("Farcaster context:", context); // ← bunu mobilde console’da gör
+        setDebug(JSON.stringify(context, null, 2));
+
         const address = (context as any)?.wallet?.address ||
                         (context as any)?.user?.verifiedAddresses?.[0] ||
-                        (context as any)?.user?.custodyAddress;
+                        (context as any)?.user?.custodyAddress ||
+                        (context as any)?.user?.fid; // fallback
 
         if (address) {
-          // Uniswap subgraph'ından $lowfreq balance check (gerçek API)
-          const res = await fetch(`https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3-base`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              query: `
-                query ($address: String!) {
-                  account(id: $address) {
-                    tokenBalances(where: {token: "0xcf9e840081ec193b7e84f5b2d1e6c4271779cb07"}) {
-                      value
-                    }
-                  }
-                }
-              `,
-              variables: { address: address.toLowerCase() }
-            })
-          });
+          const res = await fetch(`/api/balance?address=${address}`);
           const data = await res.json();
-          const balance = Number(data.data.account.tokenBalances[0]?.value || 0) / 1e18;
-          setHasToken(balance >= 100000);
+          console.log("API response:", data);
+          setHasToken(Number(data.balance || 0) >= 100000);
+        } else {
+          console.log("Adres gelmedi");
+          // TEST İÇİN ZORLA BUTON ÇIKAR
+          setHasToken(true);
         }
       } catch (e) {
         console.error(e);
+        // hata olsa bile test butonu çıksın
+        setHasToken(true);
       } finally {
         setLoading(false);
       }
@@ -51,7 +46,7 @@ export default function LowfreqMint() {
   }, []);
 
   const handleMint = () => {
-    alert("Signal minted – check your wallet!");
+    alert("Minted – test başarılı!");
   };
 
   return (
@@ -63,16 +58,19 @@ export default function LowfreqMint() {
       <h2 className="text-4xl mt-6 tracking-widest opacity-70">signals</h2>
 
       {loading ? (
-        <p className="mt-20 text-xl">checking balance...</p>
-      ) : hasToken ? (
-        <button
-          onClick={handleMint}
-          className="mt-20 bg-purple-600 hover:bg-purple-500 px-12 py-6 rounded-2xl text-3xl font-bold animate-pulse"
-        >
-          MINT SIGNAL (1/333)
-        </button>
+        <p className="mt-20 text-xl">loading...</p>
       ) : (
-        <p className="mt-20 text-xl text-zinc-500">hold 100k $lowfreq to mint</p>
+        <>
+          <button
+            onClick={handleMint}
+            className="mt-20 bg-purple-600 hover:bg-purple-500 px-16 py-8 rounded-3xl text-4xl font-black animate-pulse shadow-2xl"
+          >
+            MINT SIGNAL (TEST)
+          </button>
+          <pre className="mt-10 text-xs text-zinc-500 max-w-xs overflow-auto">
+            {debug || "no debug"}
+          </pre>
+        </>
       )}
 
       <p className="absolute bottom-10 text-xs text-zinc-600 opacity-60">
