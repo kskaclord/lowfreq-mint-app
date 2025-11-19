@@ -11,7 +11,6 @@
   "dependencies": {
     "next": "16.0.3",
     "react": "19.2.0",
-    "@coinbase/onchainkit/minikit": "^0.1.0",
     "react-dom": "19.2.0",
     "thirdweb": "^5.112.1"
   },
