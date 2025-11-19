@@ -1,21 +1,38 @@
 "use client";
 
-// BU SATIR TEK BAŞINA YETER – 2025’te yeni SDK bu
-if (typeof window !== "undefined") {
-  // @ts-ignore
-  window.sdk?.actions?.ready();
-}
+import { useEffect } from "react";
 
 export default function LowfreqMint() {
+  useEffect(() => {
+    // CDN SDK yükle + async ready çağrısı (docs'taki tam yöntem)
+    const loadAndReady = async () => {
+      if (typeof window !== "undefined") {
+        try {
+          // SDK CDN'sini güncel yükle (2025 versiyonu)
+          const script = document.createElement("script");
+          script.src = "https://cdn.jsdelivr.net/npm/@farcaster/miniapp-sdk@latest/dist/index.min.js";
+          script.async = true;
+          script.onload = async () => {
+            // SDK yüklendikten sonra ready() bas (await ile, docs'ta zorunlu)
+            const { sdk } = await import('@farcaster/miniapp-sdk');
+            await sdk.actions.ready(); // Bu satır splash'i kapatır
+          };
+          document.head.appendChild(script);
+        } catch (e) {
+          console.log("SDK ready error:", e); // Hata logla, ama devam et
+        }
+      }
+    };
+
+    loadAndReady();
+  }, []);
+
   return (
-    <div className="h-screen w-screen bg-black text-white flex flex-col items-center justify-center px-8">
-      <img src="/logo.png" alt="lowfreq" className="w-48 h-48 mb-8" />
-      <h1 className="text-8xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-zinc-100 to-zinc-500">
-        lowfreq
-      </h1>
-      <h2 className="text-4xl mt-4 tracking-widest opacity-70">signals</h2>
-      <p className="text-xl text-zinc-500 mt-12">hold 100k $lowfreq to mint</p>
-      <p className="absolute bottom-10 text-xs text-zinc-600 opacity-60">1/333 · base · token-gated</p>
+    <div className="w-full h-screen bg-black text-white flex flex-col items-center justify-center p-8">
+      <img src="/logo.png" alt="lowfreq" className="w-32 h-32 mb-8" />
+      <h1 className="text-6xl font-bold mb-2 tracking-wider">lowfreq</h1>
+      <h2 className="text-3xl mb-6 opacity-80">signals</h2>
+      <p className="text-xl text-gray-400">mint soon</p>
     </div>
   );
 }
