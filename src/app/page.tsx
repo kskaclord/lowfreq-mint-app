@@ -4,14 +4,12 @@ import { useEffect } from "react";
 
 export default function LowfreqMint() {
   useEffect(() => {
+    // SDK'nin kesin yüklendiğinden emin olmak için 3000ms bekliyoruz (Ohara gibi)
     const timer = setTimeout(() => {
-      // TypeScript'i tamamen sustur, window'u any yap
       const win = window as any;
-      if (win.sdk?.actions?.ready) {
-        win.sdk.actions.ready();
-        console.log("ready() gönderildi kanka!");
-      }
-    }, 600);
+      win.sdk?.actions?.ready?.();
+      console.log("ready() gitti kanka, 3 saniye bekledik");
+    }, 3000); // 3 saniye = Ohara'nın load time'ı
 
     return () => clearTimeout(timer);
   }, []);
