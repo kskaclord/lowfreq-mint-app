@@ -4,29 +4,15 @@ import { useEffect } from "react";
 
 export default function LowfreqMint() {
   useEffect(() => {
-    // Farcaster Mini App SDK sadece CDN ile çalışıyor, import YOK
-    const tryReady = () => {
-      if (typeof window === "undefined") return;
-
-      // 2025’te çalışan tek gerçek yol
-      if ((window as any).MiniAppSDK?.ready) {
-        (window as any).MiniAppSDK.ready();
-        console.log("lowfreq: ready() sent – splash dead");
+    // 300ms sonra ready() bas → Farcaster 2025’te çalışan tek kesin yöntem
+    const timer = setTimeout(() => {
+      if (typeof window !== "undefined") {
+        // @ts-ignore – Farcaster SDK’sı global, tipi yok diye kızmasın
+        window.MiniAppSDK?.ready?.();
       }
-    };
-
-    // Hemen dene
-    tryReady();
-
-    // 300ms arayla 8 kez daha dene (toplam 2.4 saniye)
-    let count = 0;
-    const interval = setInterval(() => {
-      tryReady();
-      if (++count === 8) clearInterval(interval);
     }, 300);
 
-    // 2.5 saniye sonra son darbe
-    setTimeout(tryReady, 2500);
+    return () => clearTimeout(timer);
   }, []);
 
   return (
