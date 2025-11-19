@@ -15,8 +15,7 @@ export default function LowfreqMint() {
 
       try {
         const context = await sdk.context;
-        // Farcaster SDK’da adres genelde burada gelir → 2025 güncel
-        const address = (context as any)?.wallet?.address || 
+        const address = (context as any)?.wallet?.address ||
                         (context as any)?.user?.verifiedAddresses?.[0] ||
                         (context as any)?.user?.custodyAddress;
 
@@ -35,7 +34,7 @@ export default function LowfreqMint() {
   }, []);
 
   const handleMint = () => {
-    sdk.actions.notification({ title: "lowfreq", body: "Signal minted ✦" });
+    alert("Signal minted ✦");
   };
 
   return (
@@ -47,11 +46,11 @@ export default function LowfreqMint() {
       <h2 className="text-4xl mt-6 tracking-widest opacity-70">signals</h2>
 
       {loading ? (
-        <p className="mt-20 text-xl">checking...</p>
+        <p className="mt-20 text-xl">checking balance...</p>
       ) : hasToken ? (
         <button
           onClick={handleMint}
-          className="mt-20 bg-purple-600 hover:bg-purple-500 px-12 py-6 rounded-2xl text-3xl font-bold"
+          className="mt-20 bg-purple-600 hover:bg-purple-500 px-12 py-6 rounded-2xl text-3xl font-bold animate-pulse"
         >
           MINT SIGNAL (1/333)
         </button>
