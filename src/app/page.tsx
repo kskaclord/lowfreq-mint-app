@@ -15,11 +15,10 @@ export default function LowfreqMint() {
 
       try {
         const context = await sdk.context;
-        const address =
-          // @ts-ignore
-          context?.user?.verifiedAddresses?.[0] ||
-          context?.user?.verifierAddresses?.[0] ||
-          context?.wallet?.address;
+        // Farcaster SDK’da adres genelde burada gelir → 2025 güncel
+        const address = (context as any)?.wallet?.address || 
+                        (context as any)?.user?.verifiedAddresses?.[0] ||
+                        (context as any)?.user?.custodyAddress;
 
         if (address) {
           const res = await fetch(`/api/balance?address=${address}`);
@@ -36,7 +35,7 @@ export default function LowfreqMint() {
   }, []);
 
   const handleMint = () => {
-    sdk.actions.notification({ title: "lowfreq", body: "Signal minted" });
+    sdk.actions.notification({ title: "lowfreq", body: "Signal minted ✦" });
   };
 
   return (
