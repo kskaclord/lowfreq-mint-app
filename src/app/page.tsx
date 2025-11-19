@@ -21,7 +21,7 @@ export default function LowfreqMint() {
   const [hasToken, setHasToken] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const { write: mint, data, isLoading: mintLoading } = useContractWrite({
+  const { writeContract, data, isPending: mintLoading } = useContractWrite({
     address: CONTRACT_ADDRESS,
     abi: ABI,
     functionName: "mint",
@@ -83,7 +83,7 @@ export default function LowfreqMint() {
         <p className="mt-20 text-xl text-zinc-400 animate-pulse">checking wallet...</p>
       ) : hasToken ? (
         <button
-          onClick={() => mint?.()}
+          onClick={() => writeContract?.()}
           disabled={mintLoading}
           className="mt-20 bg-purple-600 hover:bg-purple-500 disabled:opacity-50 px-20 py-8 rounded-3xl text-5xl font-black shadow-2xl animate-pulse transition"
         >
