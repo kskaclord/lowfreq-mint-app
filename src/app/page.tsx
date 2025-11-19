@@ -4,20 +4,24 @@ import { useEffect } from "react";
 
 export default function LowfreqMint() {
   useEffect(() => {
-    // Farcaster 2025’te splash’ı kapatmak için tek çalışan yöntem:
     const killSplash = () => {
-      // @ts-ignore
-      if (window.MiniAppSDK?.ready) window.MiniAppSDK.ready();
-      // @ts-ignore
-      if (window.fcMiniApp?.ready) window.fcMiniApp.ready();
-      // @ts-ignore
-      if (window.farcaster?.miniapp?.ready) window.farcaster.miniapp.ready();
+      // Farcaster 2025’te çalışan tüm olası yollar – hepsine basıyoruz
+      // @ts-ignore – global SDK, tipi yok diye sus
+      window.MiniAppSDK?.ready?.();
+      window.fcMiniApp?.ready?.();
+      window.farcaster?.miniapp?.ready?.();
+      window.farcaster?.actions?.ready?.();
     };
 
-    // 100ms sonra bas, 300ms sonra tekrar, 600ms sonra son darbe
-    setTimeout(killSplash, 100);
+    // 0.3sn, 0.8sn, 1.3sn, 2sn → 4 kez üst üste bas (kesin ölür)
     setTimeout(killSplash, 300);
-    setTimeout(killSplash, 600);
+    setTimeout(killSplash, 800);
+    setTimeout(killSplash, 1300);
+    setTimeout(killSplash, 2000);
+
+    // Bonus: her 500ms’de bir 5 saniye boyunca zorla (aşırı garanti)
+    const interval = setInterval(killSplash, 500);
+    setTimeout(() => clearInterval(interval), 5000);
   }, []);
 
   return (
