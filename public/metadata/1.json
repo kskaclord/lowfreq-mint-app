@@ -1,0 +1,16 @@
+{
+  "name": "lowfreq signal",
+  "description": "333 signals. no noise. token-gated on base.",
+  "image": "https://lowfreq-mint-app.vercel.app/signal.png",
+  "external_url": "https://lowfreq.wtf",
+  "attributes": [
+    {
+      "trait_type": "edition",
+      "value": "1/333"
+    },
+    {
+      "trait_type": "access",
+      "value": "100k $lowfreq"
+    }
+  ]
+}
