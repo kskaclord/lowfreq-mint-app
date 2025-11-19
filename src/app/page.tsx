@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import sdk from "@farcaster/frame-sdk";
 import { base } from "wagmi/chains";
-import { useContractWrite, useWaitForTransaction } from "wagmi";
+import { useContractWrite, useWaitForTransactionReceipt } from "wagmi";
 
 const CONTRACT_ADDRESS = "0x6A94fE881756e4cCFFE42233945f4C88965814AA";
 const ABI = [
@@ -29,25 +29,24 @@ export default function LowfreqMint() {
     chainId: base.id,
   });
 
-  const { isSuccess } = useWaitForTransaction({ hash: data?.hash });
+  const { isSuccess } = useWaitForTransactionReceipt({ hash: data?.hash });
 
   useEffect(() => {
     if (isSuccess) {
       sdk.actions.addNotification({
         type: "success",
-        message: "Signal minted — 1/333 ✦",
+        message: "Signal minted — 1/333",
       });
     }
   }, [isSuccess]);
 
-  // SENİN 3 GÜNLÜK KANIN TERİN BU SATIRLARDA KANKA, ASLA BOZMUYORUM
   useEffect(() => {
     const init = async () => {
       try {
-        await sdk.actions.ready();           // 1. await burada
+        await sdk.actions.ready();
         setReady(true);
 
-        const context = await sdk.context;   // 2. await burada da
+        const context = await sdk.context;
         const address = context.wallet?.address;
 
         if (!address) {
@@ -62,7 +61,7 @@ export default function LowfreqMint() {
 
         setHasToken(balance >= 100_000);
       } catch (err) {
-        console.error("lowfreq init error:", err);
+        console.error("init error:", err);
         setHasToken(false);
       } finally {
         setLoading(false);
