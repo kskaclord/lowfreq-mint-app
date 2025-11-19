@@ -14,9 +14,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/* SDK CDN */}
         <script src="https://cdn.jsdelivr.net/npm/@farcaster/miniapp-sdk@latest/dist/index.min.js" />
-        
-        {/* Farcaster Embed Valid için zorunlu fc:frame meta tag'leri */}
+
+        {/* FC:FRAME META TAG'LERİ – Embed Valid için zorunlu */}
         <meta property="fc:frame" content="vNext" />
         <meta property="fc:frame:image" content="https://lowfreq-mint-app.vercel.app/screenshot.png" />
         <meta property="fc:frame:image:aspect_ratio" content="1:1" />
