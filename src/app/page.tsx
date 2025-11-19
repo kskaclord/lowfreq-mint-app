@@ -4,12 +4,14 @@ import { useEffect } from "react";
 
 export default function LowfreqMint() {
   useEffect(() => {
-    // SDK'nin kesin yüklendiğinden emin olmak için 3000ms bekliyoruz (Ohara gibi)
+    // 7000ms = 7 saniye → SDK %9999 yetişir
     const timer = setTimeout(() => {
       const win = window as any;
-      win.sdk?.actions?.ready?.();
-      console.log("ready() gitti kanka, 3 saniye bekledik");
-    }, 3000); // 3 saniye = Ohara'nın load time'ı
+      if (win.sdk?.actions?.ready) {
+        win.sdk.actions.ready();
+        console.log("ready() gitti kanka, 7 saniye bekledik ama gitti!");
+      }
+    }, 7000);
 
     return () => clearTimeout(timer);
   }, []);
