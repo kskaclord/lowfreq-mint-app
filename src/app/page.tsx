@@ -1,21 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
-
 export default function LowfreqMint() {
-  useEffect(() => {
-    // 7000ms = 7 saniye → SDK %9999 yetişir
-    const timer = setTimeout(() => {
-      const win = window as any;
-      if (win.sdk?.actions?.ready) {
-        win.sdk.actions.ready();
-        console.log("ready() gitti kanka, 7 saniye bekledik ama gitti!");
-      }
-    }, 7000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
     <div className="fixed inset-0 bg-black text-white flex flex-col items-center justify-center px-8">
       <img src="/logo.png" alt="lowfreq" className="w-52 h-52 mb-12" />
