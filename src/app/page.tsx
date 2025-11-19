@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, { useState } from "react";
+import { useEffect, useState } from "react";
 import sdk from "@farcaster/frame-sdk";
 
 export default function LowfreqMint() {
@@ -15,9 +15,8 @@ export default function LowfreqMint() {
 
       try {
         const context = await sdk.context;
-        // verifiedAddresses bazen gelmeyebiliyor, o yüzden optional + fallback
         const address =
-          // @ts-ignore – Farcaster SDK tipi bazen eksik, ama çalışıyor
+          // @ts-ignore
           context?.user?.verifiedAddresses?.[0] ||
           context?.user?.verifierAddresses?.[0] ||
           context?.wallet?.address;
@@ -37,7 +36,7 @@ export default function LowfreqMint() {
   }, []);
 
   const handleMint = () => {
-    sdk.actions.notification({ title: "lowfreq", body: "Signal minted ✦" });
+    sdk.actions.notification({ title: "lowfreq", body: "Signal minted" });
   };
 
   return (
@@ -49,7 +48,7 @@ export default function LowfreqMint() {
       <h2 className="text-4xl mt-6 tracking-widest opacity-70">signals</h2>
 
       {loading ? (
-        <p className="mt-20 text-xl">checking balance...</p>
+        <p className="mt-20 text-xl">checking...</p>
       ) : hasToken ? (
         <button
           onClick={handleMint}
