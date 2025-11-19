@@ -97,11 +97,9 @@ export default function LowfreqMint() {
           {mintLoading ? "MINTING..." : "MINT SIGNAL (1/333)"}
         </button>
       ) : (
-        <p className="mt-20 text-xl text-zinc-500">hold 100k $lowfreq to mint</p>
-      )}
-
-      <p className="absolute bottom-6 text-xs text-zinc-700 opacity-50">
+            <p className="absolute bottom-6 text-xs text-zinc-700 opacity-50">
         1/333 · base · live
       </p>
-    </div>;
+    </div>
+  );
 }
