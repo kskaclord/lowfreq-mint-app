@@ -12,8 +12,8 @@
     "next": "16.0.3",
     "react": "19.2.0",
     "react-dom": "19.2.0",
-    "thirdweb": "^5.112.1"
-    "@farcaster/frame-sdk": "latest",
+    "thirdweb": "^5.112.1",
+    "@farcaster/frame-sdk": "latest"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
