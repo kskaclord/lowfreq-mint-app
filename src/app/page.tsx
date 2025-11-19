@@ -12,11 +12,7 @@ export default function LowfreqMint() {
   const [hasToken, setHasToken] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const {
-    writeContract,
-    data: hash,
-    isPending: mintLoading,
-  } = useWriteContract();
+  const { writeContract, data: hash, isPending: mintLoading } = useWriteContract();
 
   const { isSuccess } = useWaitForTransactionReceipt({ hash });
 
@@ -97,7 +93,10 @@ export default function LowfreqMint() {
           {mintLoading ? "MINTING..." : "MINT SIGNAL (1/333)"}
         </button>
       ) : (
-            <p className="absolute bottom-6 text-xs text-zinc-700 opacity-50">
+        <p className="mt-20 text-xl text-zinc-500">hold 100k $lowfreq to mint</p>
+      )}
+
+      <p className="absolute bottom-6 text-xs text-zinc-700 opacity-50">
         1/333 · base · live
       </p>
     </div>
