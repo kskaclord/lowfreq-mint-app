@@ -13,7 +13,8 @@
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "thirdweb": "^5.112.1",
-    "@farcaster/frame-sdk": "latest"
+    "@farcaster/frame-sdk": "latest",
+    "ethers": "^6.13.4"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
