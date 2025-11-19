@@ -5,23 +5,23 @@ import { useEffect } from "react";
 export default function LowfreqMint() {
   useEffect(() => {
     const killSplash = () => {
-      // Farcaster 2025’te çalışan tüm olası yollar – hepsine basıyoruz
-      // @ts-ignore – global SDK, tipi yok diye sus
-      window.MiniAppSDK?.ready?.();
-      window.fcMiniApp?.ready?.();
-      window.farcaster?.miniapp?.ready?.();
-      window.farcaster?.actions?.ready?.();
+      // TypeScript’i susturmak için “as any” kullanıyoruz – 2025’te herkes böyle yapıyor
+      const win = window as any;
+      win.MiniAppSDK?.ready?.();
+      win.fcMiniApp?.ready?.();
+      win.farcaster?.miniapp?.ready?.();
+      win.farcaster?.actions?.ready?.();
     };
 
-    // 0.3sn, 0.8sn, 1.3sn, 2sn → 4 kez üst üste bas (kesin ölür)
-    setTimeout(killSplash, 300);
-    setTimeout(killSplash, 800);
-    setTimeout(killSplash, 1300);
-    setTimeout(killSplash, 2000);
+    // 4 kez direkt vur
+    setTimeout(killSplash, 200);
+    setTimeout(killSplash, 600);
+    setTimeout(killSplash, 1000);
+    setTimeout(killSplash, 1800);
 
-    // Bonus: her 500ms’de bir 5 saniye boyunca zorla (aşırı garanti)
-    const interval = setInterval(killSplash, 500);
-    setTimeout(() => clearInterval(interval), 5000);
+    // 4 saniye boyunca her 400ms’de bir zorla (aşırı garanti)
+    const interval = setInterval(killSplash, 400);
+    setTimeout(() => clearInterval(interval), 4000);
   }, []);
 
   return (
