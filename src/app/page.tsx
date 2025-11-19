@@ -1,21 +1,30 @@
 "use client";
 
-// BU SATIR TEK BAŞINA YETER – 2025’te yeni SDK bu
-if (typeof window !== "undefined") {
-  // @ts-ignore
-  window.sdk?.actions?.ready();
-}
+import { useEffect } from "react";
 
 export default function LowfreqMint() {
+  useEffect(() => {
+    // CDN'den SDK yükle + dynamic import ile ready() bas
+    const loadSDK = async () => {
+      if (typeof window !== "undefined") {
+        try {
+          const { sdk } = await import('@farcaster/miniapp-sdk');
+          await sdk.actions.ready(); // Bu satır splash'i kapatır
+        } catch (e) {
+          console.log("SDK ready error:", e); // Hata logla, ama devam et
+        }
+      }
+    };
+
+    loadSDK();
+  }, []);
+
   return (
-    <div className="h-screen w-screen bg-black text-white flex flex-col items-center justify-center px-8">
-      <img src="/logo.png" alt="lowfreq" className="w-48 h-48 mb-8" />
-      <h1 className="text-8xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-zinc-100 to-zinc-500">
-        lowfreq
-      </h1>
-      <h2 className="text-4xl mt-4 tracking-widest opacity-70">signals</h2>
-      <p className="text-xl text-zinc-500 mt-12">hold 100k $lowfreq to mint</p>
-      <p className="absolute bottom-10 text-xs text-zinc-600 opacity-60">1/333 · base · token-gated</p>
+    <div className="w-full h-screen bg-black text-white flex flex-col items-center justify-center p-8">
+      <img src="/logo.png" alt="lowfreq" className="w-32 h-32 mb-8" />
+      <h1 className="text-6xl font-bold mb-2 tracking-wider">lowfreq</h1>
+      <h2 className="text-3xl mb-6 opacity-80">signals</h2>
+      <p className="text-xl text-gray-400">mint soon</p>
     </div>
   );
 }
