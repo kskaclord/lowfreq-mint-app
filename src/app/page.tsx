@@ -20,7 +20,7 @@ export default function LowfreqMint() {
         setDebug(JSON.stringify(context, null, 2));
 
         // Farcaster 2025’te adresi burada veriyor → wallet.address
-       const address = (context as any)?.wallet?.address || "0x2044203Bdabe14e405A2A6811621de24688E6e69";
+        const address = (context as any)?.wallet?.address;
 
         if (address) {
           console.log("Adres bulundu:", address);
