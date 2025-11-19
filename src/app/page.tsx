@@ -18,10 +18,7 @@ export default function LowfreqMint() {
 
   useEffect(() => {
     if (isSuccess) {
-      sdk.actions.addNotification({
-        type: "success",
-        message: "Signal minted — 1/333",
-      });
+      alert("Signal minted — 1/333 ✦");
     }
   }, [isSuccess]);
 
