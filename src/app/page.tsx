@@ -1,31 +1,38 @@
 "use client";
 
-const killSplash = () => {
-    // TypeScript hatasını önlemek için güvenli tip ataması
-    const win = window as any; 
-    
-    // En sade ve güçlü ready komutları (Splash kapatma)
-    win.MiniAppSDK?.ready?.();
-    win.farcaster?.actions?.ready?.(); 
-};
+import { useEffect } from "react";
 
-// Sayfa yüklenir yüklenmez (senkron) çağır
+// ready()’i useEffect DIŞINA alıyoruz → Farcaster bunu direkt çalıştırıyor
 if (typeof window !== "undefined") {
-    killSplash();
+  const win = window as any;
+
+  const killSplash = () => {
+    win.MiniAppSDK?.ready?.();
+    win.fcMiniApp?.ready?.();
+    win.farcaster?.miniapp?.ready?.();
+    win.farcaster?.actions?.ready?.();
+  };
+
+  // Sayfa açılır açılmaz + gecikmeli seri ateşle
+  killSplash();
+  setTimeout(killSplash, 300);
+  setTimeout(killSplash, 700);
+  setTimeout(killSplash, 1200);
+  setTimeout(killSplash, 2000);
 }
 
 export default function LowfreqMint() {
-  // Gecikmeli çağrılar için, zamanlama hatasını kesin çözmek amacıyla
-  setTimeout(killSplash, 400);
-  setTimeout(killSplash, 800);
-  setTimeout(killSplash, 1200);
-  setTimeout(killSplash, 2000);
+  // useEffect artık sadece görsel için (ready burda olmasın)
+  useEffect(() => {
+    // buraya hiçbir şey yazmıyoruz
+  }, []);
 
   return (
-    // w-full h-screen ile mobil ekranın tamamını kapla
     <div className="w-full h-screen bg-black text-white flex flex-col items-center justify-center p-8">
-      <h1 className="text-4xl text-green-500">ÇALIŞIYOR OLMALI</h1>
-      <p className="text-lg mt-4 text-white">Bu, içeriğin yüklendiğini gösterir.</p>
+      <img src="/logo.png" alt="lowfreq" className="w-40 h-40 mb-8" />
+      <h1 className="text-7xl font-black tracking-wider">lowfreq</h1>
+      <h2 className="text-3xl mt-4 opacity-80">signals</h2>
+      <p className="text-xl text-gray-500 mt-12">hold 100k $lowfreq to mint</p>
     </div>
   );
 }
