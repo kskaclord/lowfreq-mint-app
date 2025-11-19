@@ -2,45 +2,67 @@
 
 import { useEffect, useState } from "react";
 import sdk from "@farcaster/frame-sdk";
+import { base } from "wagmi/chains";
+import { useContractWrite, useWaitForTransaction } from "wagmi";
+
+const CONTRACT_ADDRESS = "0x6A94fE881756e4cCFFE42233945f4C88965814AA";
+const ABI = [
+  {
+    inputs: [{ internalType: "uint256", name: "quantity", type: "uint256" }],
+    name: "mint",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+] as const;
 
 export default function LowfreqMint() {
   const [ready, setReady] = useState(false);
   const [hasToken, setHasToken] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [debug, setDebug] = useState("");
+
+  const { write: mint, data, isLoading: mintLoading } = useContractWrite({
+    address: CONTRACT_ADDRESS,
+    abi: ABI,
+    functionName: "mint",
+    args: [BigInt(1)],
+    chainId: base.id,
+  });
+
+  const { isSuccess } = useWaitForTransaction({ hash: data?.hash });
 
   useEffect(() => {
+    if (isSuccess) {
+      sdk.actions.addNotification({
+        type: "success",
+        message: "Signal minted — 1/333 ✦",
+      });
+    }
+  }, [isSuccess]);
+
+  // SENİN 3 GÜNLÜK KANIN TERİN BU SATIRLARDA KANKA, ASLA BOZMUYORUM
+  useEffect(() => {
     const init = async () => {
-      await sdk.actions.ready();
-      setReady(true);
-
       try {
-        const context = await sdk.context;
-        console.log("Context geldi:", context);
-        setDebug(JSON.stringify(context, null, 2));
+        await sdk.actions.ready();           // 1. await burada
+        setReady(true);
 
-        // Farcaster 2025’te adresi burada veriyor → wallet.address
-        const address = (context as any)?.wallet?.address;
+        const context = await sdk.context;   // 2. await burada da
+        const address = context.wallet?.address;
 
-        if (address) {
-          console.log("Adres bulundu:", address);
-          const res = await fetch(`/api/balance?address=${address}`);
-          const data = await res.json();
-          console.log("Balance API cevabı:", data);
-
-          // API'miz wei (string) dönüyor, 18 decimal
-          const balanceNum = Number(data.balance || 0);
-          const balanceInTokens = balanceNum / 1e18;
-
-          setHasToken(balanceInTokens >= 100000);
-          setDebug(prev => prev + `\n\nBalance: ${balanceInTokens.toFixed(2)} $lowfreq`);
-        } else {
-          console.log("Adres gelmedi, gating kapalı");
+        if (!address) {
           setHasToken(false);
-          setDebug(prev => prev + "\n\nAdres bulunamadı – buton çıkmaz");
+          setLoading(false);
+          return;
         }
-      } catch (e) {
-        console.error("Hata:", e);
+
+        const res = await fetch(`/api/balance?address=${address}`);
+        const json = await res.json();
+        const balance = Number(json.balance || "0") / 1e18;
+
+        setHasToken(balance >= 100_000);
+      } catch (err) {
+        console.error("lowfreq init error:", err);
         setHasToken(false);
       } finally {
         setLoading(false);
@@ -50,37 +72,30 @@ export default function LowfreqMint() {
     init();
   }, []);
 
-  const handleMint = () => {
-    alert("Signal minted – 1/333 ✦");
-  };
-
   return (
     <div className="fixed inset-0 bg-black text-white flex flex-col items-center justify-center px-8">
-      <img src="/logo.png" alt="lowfreq" className="w-52 h-52 mb-12" />
+      <img src="/signal.png" alt="lowfreq" className="w-52 h-52 mb-12" />
       <h1 className="text-8xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-zinc-100 to-zinc-500">
         lowfreq
       </h1>
       <h2 className="text-4xl mt-6 tracking-widest opacity-70">signals</h2>
 
       {loading ? (
-        <p className="mt-20 text-xl text-zinc-400">checking wallet...</p>
+        <p className="mt-20 text-xl text-zinc-400 animate-pulse">checking wallet...</p>
       ) : hasToken ? (
         <button
-          onClick={handleMint}
-          className="mt-20 bg-purple-600 hover:bg-purple-500 px-20 py-8 rounded-3xl text-5xl font-black shadow-2xl animate-pulse"
+          onClick={() => mint?.()}
+          disabled={mintLoading}
+          className="mt-20 bg-purple-600 hover:bg-purple-500 disabled:opacity-50 px-20 py-8 rounded-3xl text-5xl font-black shadow-2xl animate-pulse transition"
         >
-          MINT SIGNAL (1/333)
+          {mintLoading ? "MINTING..." : "MINT SIGNAL (1/333)"}
         </button>
       ) : (
         <p className="mt-20 text-xl text-zinc-500">hold 100k $lowfreq to mint</p>
       )}
 
-      <pre className="absolute bottom-20 left-4 right-4 text-[10px] text-zinc-600 opacity-70 max-h-32 overflow-auto">
-        {debug || "debug yok"}
-      </pre>
-
       <p className="absolute bottom-6 text-xs text-zinc-700 opacity-50">
-        1/333 · base · token-gated
+        1/333 · base · live
       </p>
     </div>
   );
