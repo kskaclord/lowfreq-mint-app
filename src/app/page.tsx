@@ -1,12 +1,16 @@
 "use client";
 
-if (typeof window !== "undefined") (window as any).sdk?.actions?.ready?.();
+// BU SATIR TEK BAŞINA YETER – 2025’te yeni SDK bu
+if (typeof window !== "undefined") {
+  // @ts-ignore
+  window.sdk?.actions?.ready();
+}
 
-export default function App() {
+export default function LowfreqMint() {
   return (
     <div className="h-screen w-screen bg-black text-white flex flex-col items-center justify-center px-8">
       <img src="/logo.png" alt="lowfreq" className="w-48 h-48 mb-8" />
-      <h1 className="text-8xl font-black text-transparent bg-clip-text bg-gradient-to-b from-zinc-100 to-zinc-500 tracking-tight">
+      <h1 className="text-8xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-zinc-100 to-zinc-500">
         lowfreq
       </h1>
       <h2 className="text-4xl mt-4 tracking-widest opacity-70">signals</h2>
