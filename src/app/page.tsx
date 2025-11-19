@@ -1,21 +1,14 @@
 "use client";
 
 import { useEffect } from "react";
-import { useOpenUrl } from "@coinbase/onchainkit/minikit"; // Base migration – güncel hook
+import { useMiniKit } from "@coinbase/onchainkit/minikit";
 
 export default function LowfreqMint() {
-  const openUrl = useOpenUrl();
+  const { setFrameReady } = useMiniKit();
 
   useEffect(() => {
-    // Base 2025 docs'taki tam yöntem: hook ile ready() entegre
-    openUrl('about:blank'); // Dummy call, SDK'yi tetikle
-    // Docs'taki migration: await sdk.actions.ready() ama hook ile
-    const ready = async () => {
-      const { sdk } = await import('@farcaster/miniapp-sdk');
-      await sdk.actions.ready(); // Splash kapanır
-    };
-    ready();
-  }, [openUrl]);
+    setFrameReady(); // Splash'i kapat – Base migration docs'taki tam yöntem
+  }, [setFrameReady]);
 
   return (
     <div className="w-full h-screen bg-black text-white flex flex-col items-center justify-center p-8">
