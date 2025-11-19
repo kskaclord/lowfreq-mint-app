@@ -2,10 +2,9 @@
 
 import { useEffect } from "react";
 
-// BU KISIM TAM ÇALIŞAN HALİ – ASLA DEĞİŞTİRME
+// ready() dışarıda + biraz daha agresif + en son 500ms’de zorla tekrar
 if (typeof window !== "undefined") {
   const win = window as any;
-
   const killSplash = () => {
     win.MiniAppSDK?.ready?.();
     win.fcMiniApp?.ready?.();
@@ -13,47 +12,36 @@ if (typeof window !== "undefined") {
     win.farcaster?.actions?.ready?.();
   };
 
+  // 5 kez seri + en son 3 saniyede kesin öldür
   killSplash();
-  setTimeout(killSplash, 300);
-  setTimeout(killSplash, 700);
-  setTimeout(killSplash, 1200);
-  setTimeout(killSplash, 2000);
+  setTimeout(killSplash, 200);
+  setTimeout(killSplash, 500);
+  setTimeout(killSplash, 900);
+  setTimeout(killSplash, 1500);
+  setTimeout(killSplash, 3000);  // ← BU SATIR KRİTİK (normal kullanıcı için)
+}
+
+// BU SATIR DA KRİTİK → body’ye h-screen ve overflow-hidden zorla
+if (typeof document !== "undefined") {
+  document.documentElement.classList.add("h-screen");
+  document.body.classList.add("h-screen", "overflow-hidden");
 }
 
 export default function LowfreqMint() {
-  useEffect(() => {
-    // boş kalacak, hazır splash zaten dışarıda
-  }, []);
-
   return (
-    <div className="w-full h-screen bg-black text-white flex flex-col items-center justify-center px-8 overflow-hidden">
-      {/* Logo */}
-      <img 
-        src="/logo.png" 
-        alt="lowfreq" 
-        className="w-52 h-52 mb-10 select-none pointer-events-none" 
-      />
-
-      {/* lowfreq – gradient ve ultra ağır */}
-      <h1 className="text-8xl md:text-9xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-zinc-100 via-zinc-300 to-zinc-600 leading-none">
+    <div className="fixed inset-0 flex flex-col items-center justify-center bg-black text-white px-8">
+      <img src="/logo.png" alt="lowfreq" className="w-52 h-52 mb-10 select-none" />
+      <h1 className="text-8xl md:text-9xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-zinc-100 via-zinc-300 to-zinc-600">
         lowfreq
       </h1>
-
-      {/* signals */}
       <h2 className="text-4xl md:text-5xl mt-6 tracking-widest opacity-75 font-light">
         signals
       </h2>
-
-      {/* Mint koşulu */}
       <p className="text-xl md:text-2xl text-zinc-500 mt-16 tracking-wider font-medium">
         hold 100k $lowfreq to mint
       </p>
-
-      {/* Alt bilgi – sabit altta */}
-      <div className="absolute bottom-8 left-0 right-0 text-center">
-        <p className="text-xs text-zinc-600 tracking-widest opacity-70">
-          1/333 · base · token-gated
-        </p>
+      <div className="absolute bottom-8 text-xs text-zinc-600 opacity-70 tracking-widest">
+        1/333 · base · token-gated
       </div>
     </div>
   );
