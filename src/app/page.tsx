@@ -13,12 +13,11 @@ export default function LowfreqMint() {
   const [loading, setLoading] = useState(true);
 
   const { writeContract, data: hash, isPending: mintLoading } = useWriteContract();
-
   const { isSuccess } = useWaitForTransactionReceipt({ hash });
 
   useEffect(() => {
     if (isSuccess) {
-      alert("Signal minted — 1/333 ✦");
+      alert("Signal minted — 1/333");
     }
   }, [isSuccess]);
 
@@ -29,7 +28,9 @@ export default function LowfreqMint() {
         setReady(true);
 
         const context = await sdk.context;
-        const address = context.wallet?.address;
+
+        // 2025'TE ADRES ŞURDA → context.address
+        const address = context.address;
 
         if (!address) {
           setHasToken(false);
@@ -43,7 +44,7 @@ export default function LowfreqMint() {
 
         setHasToken(balance >= 100_000);
       } catch (err) {
-        console.error(err);
+        console.error("init error:", err);
         setHasToken(false);
       } finally {
         setLoading(false);
